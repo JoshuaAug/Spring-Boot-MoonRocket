@@ -1,0 +1,190 @@
+/* =====================================================
+   login.css — tela de autenticação
+   ===================================================== */
+
+.view-login {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* ---------- LADO ESQUERDO: marca ---------- */
+
+.login-brand {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem 3.5rem;
+  overflow: hidden;
+  border-right: 1px solid var(--border);
+}
+
+/* grade de fundo */
+.login-brand::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+          linear-gradient(var(--border) 1px, transparent 1px),
+          linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 52px 52px;
+  pointer-events: none;
+}
+
+/* brilho central */
+.login-brand::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 55% 45% at 35% 52%, rgba(56,189,248,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.login-logo {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 3.5rem;
+}
+
+.login-logo-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(56,189,248,0.1);
+  border: 1px solid rgba(56,189,248,0.3);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.login-logo-name {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-1);
+}
+
+.login-headline {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-1);
+  max-width: 360px;
+  margin-bottom: 1.1rem;
+}
+
+.login-headline em {
+  font-style: normal;
+  color: var(--accent);
+}
+
+.login-desc {
+  position: relative;
+  z-index: 1;
+  font-size: 0.9rem;
+  color: var(--text-2);
+  max-width: 320px;
+  margin-bottom: 2.8rem;
+}
+
+/* indicadores de status */
+.login-status {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  list-style: none;
+}
+
+.login-status li {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.8rem;
+  color: var(--text-2);
+}
+
+/* ---------- LADO DIREITO: formulário ---------- */
+
+.login-form-side {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2.5rem;
+  background: var(--bg-surface);
+}
+
+.login-form-box {
+  width: 100%;
+  max-width: 360px;
+}
+
+.login-form-title {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-1);
+  margin-bottom: 0.35rem;
+}
+
+.login-form-sub {
+  font-size: 0.88rem;
+  color: var(--text-2);
+  margin-bottom: 2.2rem;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 0.72rem;
+  background: var(--accent);
+  color: #051525;
+  border-radius: var(--radius);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: all var(--transition);
+  margin-top: 0.25rem;
+}
+.login-btn:hover {
+  background: #67d4fc;
+  box-shadow: 0 0 22px rgba(56,189,248,0.35);
+}
+
+.login-link {
+  display: block;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-3);
+  margin-top: 1.25rem;
+}
+.login-link a { color: var(--text-2); }
+.login-link a:hover { color: var(--accent); }
+
+/* ---------- Responsivo ---------- */
+
+@media (max-width: 740px) {
+  .view-login {
+    grid-template-columns: 1fr;
+  }
+  .login-brand {
+    display: none;
+  }
+  .login-form-side {
+    padding: 3rem 1.5rem;
+  }
+}

@@ -1,0 +1,66 @@
+<!-- =====================================================
+     login.html — fragmento carregado pelo router
+     ===================================================== -->
+<div class="view-login">
+
+    <!-- LADO ESQUERDO -->
+    <aside class="login-brand">
+        <div class="login-logo">
+            <div class="login-logo-icon">🚀</div>
+            <span class="login-logo-name">Rocketto</span>
+        </div>
+
+        <h1 class="login-headline">
+            Central de<br/><em>Controle</em> Espacial
+        </h1>
+
+        <p class="login-desc">
+            Gerencie missões, foguetes, satélites e agentes
+            da sua estação orbital a partir de um único painel.
+        </p>
+
+        <ul class="login-status">
+            <li>
+                <span class="dot dot-success"></span>
+                Sistemas operacionais — nominal
+            </li>
+            <li>
+                <span class="dot dot-warning"></span>
+                2 missões em andamento
+            </li>
+            <li>
+                <span class="dot dot-info"></span>
+                Telemetria ativa — LEO / GEO
+            </li>
+        </ul>
+    </aside>
+
+    <!-- LADO DIREITO -->
+    <main class="login-form-side">
+        <div class="login-form-box">
+
+            <h2 class="login-form-title">Acesso Restrito</h2>
+            <p class="login-form-sub">Entre com suas credenciais de general.</p>
+
+            <div class="field">
+                <label class="input-label" for="login-id">ID do General</label>
+                <input class="input" type="text" id="login-id"
+                       placeholder="ex: GEN-7742" autocomplete="username" />
+            </div>
+
+            <div class="field">
+                <label class="input-label" for="login-pass">Senha</label>
+                <input class="input" type="password" id="login-pass"
+                       placeholder="••••••••" autocomplete="current-password" />
+            </div>
+
+            <button class="login-btn" type="button" data-route="/dashboard">Iniciar Sessão</button>
+
+            <p class="login-link">
+                Esqueceu o acesso? <a href="#">Solicitar recuperação</a>
+            </p>
+
+        </div>
+    </main>
+
+</div>

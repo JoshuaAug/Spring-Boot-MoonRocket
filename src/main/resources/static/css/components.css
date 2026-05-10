@@ -1,0 +1,276 @@
+/* =====================================================
+   components.css — botões, inputs, cards, badges
+   ===================================================== */
+
+/* ----- BOTÕES ----- */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 1.1rem;
+    border-radius: var(--radius);
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: all var(--transition);
+    cursor: pointer;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: #06111d;
+    font-weight: 600;
+}
+.btn-primary:hover {
+    background: #67d4fc;
+    box-shadow: 0 0 18px rgba(56,189,248,0.3);
+}
+
+.btn-secondary {
+    background: var(--bg-card);
+    color: var(--text-1);
+    border-color: var(--border-hi);
+}
+.btn-secondary:hover {
+    background: var(--bg-hover);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.btn-ghost {
+    color: var(--text-2);
+}
+.btn-ghost:hover {
+    color: var(--text-1);
+    background: var(--bg-hover);
+}
+
+.btn-danger {
+    background: rgba(248,113,113,0.12);
+    color: var(--danger);
+    border-color: rgba(248,113,113,0.25);
+}
+.btn-danger:hover {
+    background: rgba(248,113,113,0.22);
+}
+
+.btn-sm {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+}
+
+.btn-icon {
+    padding: 0.5rem;
+    border-radius: var(--radius);
+}
+
+/* ----- INPUTS ----- */
+
+.input {
+    width: 100%;
+    padding: 0.6rem 0.85rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-1);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+.input::placeholder { color: var(--text-3); }
+.input:focus {
+    border-color: rgba(56,189,248,0.45);
+    box-shadow: 0 0 0 3px rgba(56,189,248,0.1);
+}
+
+.input-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-2);
+    margin-bottom: 0.4rem;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 1.1rem;
+}
+
+/* ----- CARD ----- */
+
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.card-title {
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-1);
+}
+
+/* ----- BADGES / STATUS ----- */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 100px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+}
+
+.badge-success { background: rgba(52,211,153,0.12); color: var(--success); }
+.badge-warning { background: rgba(251,191,36,0.12);  color: var(--warning); }
+.badge-danger  { background: rgba(248,113,113,0.12); color: var(--danger); }
+.badge-info    { background: rgba(56,189,248,0.12);  color: var(--accent); }
+.badge-neutral { background: var(--bg-hover); color: var(--text-2); }
+
+.dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.dot-success { background: var(--success); box-shadow: 0 0 5px var(--success); }
+.dot-warning { background: var(--warning); box-shadow: 0 0 5px var(--warning); }
+.dot-danger  { background: var(--danger);  box-shadow: 0 0 5px var(--danger); }
+.dot-info    { background: var(--accent);  box-shadow: 0 0 5px var(--accent); }
+
+/* ----- TABELA ----- */
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+}
+
+.table th {
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    border-bottom: 1px solid var(--border);
+}
+
+.table td {
+    padding: 0.75rem 0.9rem;
+    color: var(--text-1);
+    border-bottom: 1px solid var(--border);
+}
+
+.table tbody tr:hover {
+    background: var(--bg-hover);
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ----- DIVIDER ----- */
+
+.divider {
+    height: 1px;
+    background: var(--border);
+    margin: 1.25rem 0;
+}
+
+/* ----- MODAL (estrutura) ----- */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(7,17,29,0.75);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 1rem;
+}
+
+.modal {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-hi);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 460px;
+    padding: 1.75rem;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.modal-title {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-1);
+}
+
+.modal-close {
+    color: var(--text-2);
+    font-size: 1.2rem;
+    line-height: 1;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: color var(--transition);
+}
+.modal-close:hover { color: var(--text-1); }
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+}
+
+/* ----- SELECT ----- */
+
+.select {
+    width: 100%;
+    padding: 0.6rem 0.85rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-1);
+    font-size: 0.9rem;
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color var(--transition);
+}
+.select:focus {
+    border-color: rgba(56,189,248,0.45);
+    box-shadow: 0 0 0 3px rgba(56,189,248,0.1);
+}

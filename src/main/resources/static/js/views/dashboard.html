@@ -1,0 +1,264 @@
+<!-- =====================================================
+     dashboard.html — fragmento carregado pelo router
+     ===================================================== -->
+<div class="view-dashboard">
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="#" class="navbar-logo">
+            <span class="navbar-logo-icon">🚀</span>
+            Rocketto
+        </a>
+
+        <ul class="navbar-nav">
+            <li><a href="#" class="active">Central</a></li>
+            <li><a href="#">Missões</a></li>
+            <li><a href="#">Foguetes</a></li>
+            <li><a href="#">Satélites</a></li>
+            <li><a href="#">Agentes</a></li>
+        </ul>
+
+        <div class="navbar-right">
+            <div class="navbar-user">
+                <div class="navbar-avatar">GN</div>
+                <span>General</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CORPO -->
+    <div class="dashboard-body">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <span class="sidebar-section-label">Navegação</span>
+            <a href="#" class="sidebar-link active">
+                <span class="sidebar-link-icon">🏠</span> Painel
+            </a>
+            <a href="#" class="sidebar-link">
+                <span class="sidebar-link-icon">🎯</span> Missões
+            </a>
+            <a href="#" class="sidebar-link">
+                <span class="sidebar-link-icon">🚀</span> Foguetes
+            </a>
+            <a href="#" class="sidebar-link">
+                <span class="sidebar-link-icon">🛰️</span> Satélites
+            </a>
+            <a href="#" class="sidebar-link">
+                <span class="sidebar-link-icon">👤</span> Agentes
+            </a>
+            <a href="#" class="sidebar-link">
+                <span class="sidebar-link-icon">👥</span> Times
+            </a>
+
+            <span class="sidebar-section-label">Sistema</span>
+            <a href="#" class="sidebar-link">
+                <span class="sidebar-link-icon">⚙️</span> Configurações
+            </a>
+            <a href="#" class="sidebar-link">
+                <span class="sidebar-link-icon">🚪</span> Sair
+            </a>
+        </aside>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="dashboard-main">
+
+            <!-- Resumo numérico -->
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <span class="summary-card-label">Missões ativas</span>
+                    <span class="summary-card-value">2</span>
+                    <span class="summary-card-sub">1 em órbita, 1 preparando</span>
+                </div>
+                <div class="summary-card">
+                    <span class="summary-card-label">Foguetes</span>
+                    <span class="summary-card-value">4</span>
+                    <span class="summary-card-sub">2 disponíveis, 2 em missão</span>
+                </div>
+                <div class="summary-card">
+                    <span class="summary-card-label">Satélites</span>
+                    <span class="summary-card-value">6</span>
+                    <span class="summary-card-sub">5 ativos, 1 inativo</span>
+                </div>
+                <div class="summary-card">
+                    <span class="summary-card-label">Agentes</span>
+                    <span class="summary-card-value">12</span>
+                    <span class="summary-card-sub">8 disponíveis, 4 em missão</span>
+                </div>
+            </div>
+
+            <!-- Missões + Foguetes -->
+            <div class="data-grid">
+
+                <!-- Card Missões -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Missões <span class="section-count">(2)</span></span>
+                        <button class="btn btn-sm btn-primary">+ Nova</button>
+                    </div>
+
+                    <div class="list-item">
+                        <div class="list-item-info">
+                            <span class="list-item-name">Alpha-01</span>
+                            <span class="list-item-meta">Objetivo: Reconhecimento — LEO</span>
+                        </div>
+                        <div class="list-item-actions">
+              <span class="badge badge-success">
+                <span class="dot dot-success"></span> Ativa
+              </span>
+                            <button class="btn btn-sm btn-secondary">Ver</button>
+                        </div>
+                    </div>
+
+                    <div class="list-item">
+                        <div class="list-item-info">
+                            <span class="list-item-name">Beta-02</span>
+                            <span class="list-item-meta">Objetivo: Satélite — GEO</span>
+                        </div>
+                        <div class="list-item-actions">
+              <span class="badge badge-warning">
+                <span class="dot dot-warning"></span> Preparando
+              </span>
+                            <button class="btn btn-sm btn-secondary">Ver</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Foguetes -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Foguetes <span class="section-count">(4)</span></span>
+                        <button class="btn btn-sm btn-primary">+ Novo</button>
+                    </div>
+
+                    <div class="list-item">
+                        <div class="list-item-info">
+                            <span class="list-item-name">Falcão-1</span>
+                            <span class="list-item-meta">Combustível: 80% · Órbita: LEO · Sem carga</span>
+                        </div>
+                        <div class="list-item-actions">
+                            <span class="badge badge-success">Disponível</span>
+                        </div>
+                    </div>
+
+                    <div class="list-item">
+                        <div class="list-item-info">
+                            <span class="list-item-name">Falcão-2</span>
+                            <span class="list-item-meta">Combustível: 55% · Órbita: GEO · Com satélite</span>
+                        </div>
+                        <div class="list-item-actions">
+                            <span class="badge badge-info">Em missão</span>
+                        </div>
+                    </div>
+
+                    <div class="list-item">
+                        <div class="list-item-info">
+                            <span class="list-item-name">Tocha-1</span>
+                            <span class="list-item-meta">Combustível: 100% · Solo · Sem carga</span>
+                        </div>
+                        <div class="list-item-actions">
+                            <span class="badge badge-success">Disponível</span>
+                        </div>
+                    </div>
+
+                    <div class="list-item">
+                        <div class="list-item-info">
+                            <span class="list-item-name">Tocha-2</span>
+                            <span class="list-item-meta">Combustível: 30% · Órbita: MEO · Com satélite</span>
+                        </div>
+                        <div class="list-item-actions">
+                            <span class="badge badge-info">Em missão</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Satélites + Agentes -->
+            <div class="data-grid">
+
+                <!-- Card Satélites -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Satélites <span class="section-count">(6)</span></span>
+                        <button class="btn btn-sm btn-primary">+ Novo</button>
+                    </div>
+
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Massa</th>
+                            <th>Energia</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>SAT-01</td>
+                            <td>320 kg</td>
+                            <td>85%</td>
+                            <td><span class="badge badge-success">Ativo</span></td>
+                        </tr>
+                        <tr>
+                            <td>SAT-02</td>
+                            <td>210 kg</td>
+                            <td>72%</td>
+                            <td><span class="badge badge-success">Ativo</span></td>
+                        </tr>
+                        <tr>
+                            <td>SAT-03</td>
+                            <td>480 kg</td>
+                            <td>12%</td>
+                            <td><span class="badge badge-danger">Inativo</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Card Agentes -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Agentes <span class="section-count">(12)</span></span>
+                        <button class="btn btn-sm btn-primary">+ Novo</button>
+                    </div>
+
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Função</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Ana Torres</td>
+                            <td>Comandante</td>
+                            <td><span class="badge badge-info">Em missão</span></td>
+                        </tr>
+                        <tr>
+                            <td>Bruno Silva</td>
+                            <td>Piloto</td>
+                            <td><span class="badge badge-info">Em missão</span></td>
+                        </tr>
+                        <tr>
+                            <td>Carla Melo</td>
+                            <td>Especialista</td>
+                            <td><span class="badge badge-success">Disponível</span></td>
+                        </tr>
+                        <tr>
+                            <td>Diego Ramos</td>
+                            <td>Especialista</td>
+                            <td><span class="badge badge-success">Disponível</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+</div>
