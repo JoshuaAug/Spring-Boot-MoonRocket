@@ -1,53 +1,58 @@
 /* =====================================================
-   login.css — tela de autenticação
+   login.css — tela de autenticação (layout centralizado)
    ===================================================== */
 
 .view-login {
   min-height: 100vh;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-
-/* ---------- LADO ESQUERDO: marca ---------- */
-
-.login-brand {
-  position: relative;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
-  padding: 4rem 3.5rem;
+  padding: 2rem 1rem;
+  position: relative;
   overflow: hidden;
-  border-right: 1px solid var(--border);
 }
 
 /* grade de fundo */
-.login-brand::before {
+.view-login::before {
   content: '';
   position: absolute;
   inset: 0;
   background-image:
-          linear-gradient(var(--border) 1px, transparent 1px),
-          linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
   background-size: 52px 52px;
   pointer-events: none;
+  z-index: 0;
 }
 
 /* brilho central */
-.login-brand::after {
+.view-login::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 55% 45% at 35% 52%, rgba(56,189,248,0.07) 0%, transparent 70%);
+  background: radial-gradient(ellipse 60% 55% at 50% 45%, rgba(56,189,248,0.07) 0%, transparent 65%);
   pointer-events: none;
+  z-index: 0;
 }
 
-.login-logo {
+/* ---------- TOPO: identidade ---------- */
+
+.login-brand {
   position: relative;
   z-index: 1;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.login-logo {
+  display: flex;
   align-items: center;
   gap: 0.7rem;
-  margin-bottom: 3.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .login-logo-icon {
@@ -72,15 +77,12 @@
 }
 
 .login-headline {
-  position: relative;
-  z-index: 1;
   font-family: var(--font-display);
-  font-size: 2.1rem;
+  font-size: 2rem;
   font-weight: 700;
   line-height: 1.2;
   color: var(--text-1);
-  max-width: 360px;
-  margin-bottom: 1.1rem;
+  margin-bottom: 0.75rem;
 }
 
 .login-headline em {
@@ -89,61 +91,41 @@
 }
 
 .login-desc {
-  position: relative;
-  z-index: 1;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--text-2);
-  max-width: 320px;
-  margin-bottom: 2.8rem;
+  max-width: 340px;
 }
 
-/* indicadores de status */
-.login-status {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-  list-style: none;
-}
-
-.login-status li {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  font-size: 0.8rem;
-  color: var(--text-2);
-}
-
-/* ---------- LADO DIREITO: formulário ---------- */
+/* ---------- MEIO: formulário ---------- */
 
 .login-form-side {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem 2.5rem;
-  background: var(--bg-surface);
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 400px;
 }
 
 .login-form-box {
-  width: 100%;
-  max-width: 360px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hi);
+  border-radius: var(--radius-lg);
+  padding: 2rem 2rem 1.75rem;
 }
 
 .login-form-title {
   font-family: var(--font-display);
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-1);
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.3rem;
 }
 
 .login-form-sub {
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   color: var(--text-2);
-  margin-bottom: 2.2rem;
+  margin-bottom: 1.75rem;
 }
 
 .login-btn {
@@ -175,16 +157,50 @@
 .login-link a { color: var(--text-2); }
 .login-link a:hover { color: var(--accent); }
 
-/* ---------- Responsivo ---------- */
+/* ---------- BAIXO: status ---------- */
 
-@media (max-width: 740px) {
-  .view-login {
-    grid-template-columns: 1fr;
-  }
-  .login-brand {
-    display: none;
-  }
-  .login-form-side {
-    padding: 3rem 1.5rem;
-  }
+.login-status {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+  margin-top: 2rem;
+}
+
+.login-status li {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+
+@media (max-width: 500px) {
+  .login-status { flex-direction: column; gap: 0.5rem; align-items: center; }
+  .login-headline { font-size: 1.5rem; }
+}
+
+/* ---------- Feedback de erro ---------- */
+
+.login-error {
+  font-size: 0.82rem;
+  color: var(--danger);
+  background: rgba(248,113,113,0.08);
+  border: 1px solid rgba(248,113,113,0.2);
+  border-radius: var(--radius);
+  padding: 0.55rem 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-8px); }
+  40%       { transform: translateX(8px); }
+  60%       { transform: translateX(-5px); }
+  80%       { transform: translateX(5px); }
+}
+
+.shake {
+  animation: shake 0.35s ease;
 }

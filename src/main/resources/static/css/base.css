@@ -32,8 +32,8 @@
   --text-2: #6b8fad;
   --text-3: #334e65;
 
-  /* Tipografia */
-  --font-display: 'Orbitron', monospace;
+  /* Tipografia font-family: */
+  --font-display: "Audiowide", sans-serif;
   --font-body:    'DM Sans', sans-serif;
 
   /* Geometria */

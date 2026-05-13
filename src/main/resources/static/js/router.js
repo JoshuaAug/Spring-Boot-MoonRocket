@@ -14,14 +14,37 @@ async function navigate(path) {
     try {
         const res  = await fetch(file);
         const html = await res.text();
-        document.getElementById('app').innerHTML = html;
+        const app  = document.getElementById('app');
+
+        // innerHTML não executa <script> — precisamos recriar os nós manualmente
+        app.innerHTML = html;
+        reexecutarScripts(app);
+
     } catch (e) {
         document.getElementById('app').innerHTML =
             '<p style="padding:2rem;color:#f87171">Erro ao carregar a página.</p>';
     }
 }
 
-// Escuta cliques em links internos
+// Recria e executa cada <script> injetado via innerHTML
+function reexecutarScripts(container) {
+    container.querySelectorAll('script').forEach(scriptAntigo => {
+        const scriptNovo = document.createElement('script');
+
+        // Copia atributos (src, type, etc.)
+        Array.from(scriptAntigo.attributes).forEach(attr => {
+            scriptNovo.setAttribute(attr.name, attr.value);
+        });
+
+        // Copia o conteúdo inline
+        scriptNovo.textContent = scriptAntigo.textContent;
+
+        // Substitui o script inerte pelo novo (que vai executar)
+        scriptAntigo.parentNode.replaceChild(scriptNovo, scriptAntigo);
+    });
+}
+
+// Escuta cliques em links internos com data-route
 document.addEventListener('click', (e) => {
     const link = e.target.closest('[data-route]');
     if (!link) return;
@@ -36,5 +59,4 @@ window.addEventListener('popstate', () => {
     navigate(window.location.pathname);
 });
 
-// Exporta para uso no app.js
 window.navigate = navigate;
