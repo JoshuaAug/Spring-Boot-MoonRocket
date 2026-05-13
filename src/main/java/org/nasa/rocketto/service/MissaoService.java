@@ -32,23 +32,25 @@ public class MissaoService {
 
     public Missao buscarPorId(Long id) {
         return missaoRepo.findById(id)
-            .orElseThrow(() -> new RuntimeException("Missão não encontrada: " + id));
+                .orElseThrow(() -> new RuntimeException("Missão não encontrada: " + id));
     }
 
-    // Criar missão — valida peso antes (lógica original do conferirPeso)
     public Missao criar(MissaoRequest req) {
         Foguete foguete   = fogueteService.buscarPorId(req.getFogueteId());
         Satelite satelite = sateliteService.buscarPorId(req.getSateliteId());
 
-        if (!conferirPeso(foguete, satelite)) {
-            throw new RuntimeException("Peso do satélite ultrapassa a capacidade do foguete!");
+        // Regra: massa do satélite deve ser menor ou igual à capacidade de carga do foguete
+        if (satelite.getMassa() > foguete.getCarga()) {
+            throw new RuntimeException(
+                    "Satélite muito pesado! Massa: " + satelite.getMassa() +
+                            " kg — Capacidade do foguete: " + foguete.getCarga() + " kg"
+            );
         }
 
         Missao missao = new Missao(req.getNome(), req.getObjetivo(), foguete, satelite);
         return missaoRepo.save(missao);
     }
 
-    // Iniciar missão
     public Missao iniciar(Long id) {
         Missao missao = buscarPorId(id);
         if (missao.getStatus() != StatusMissao.PREPARANDO) {
@@ -56,19 +58,17 @@ public class MissaoService {
         }
         boolean lancou = missao.iniciar();
         if (!lancou) {
-            throw new RuntimeException("Falha no lançamento: combustível insuficiente.");
+            throw new RuntimeException("Falha no lançamento: combustível insuficiente (mínimo 50 ton).");
         }
         return missaoRepo.save(missao);
     }
 
-    // Encerrar missão
     public Missao encerrar(Long id) {
         Missao missao = buscarPorId(id);
         missao.encerrar();
         return missaoRepo.save(missao);
     }
 
-    // Usar radar — retorna o resultado + salva dado na missão
     public Map<String, Object> usarRadar(Long id) {
         Missao missao = buscarPorId(id);
         if (missao.getStatus() != StatusMissao.EM_ANDAMENTO) {
@@ -79,30 +79,27 @@ public class MissaoService {
         String resultado  = satelite.usarRadar();
 
         if (resultado.equals("SEM_ENERGIA")) {
-            throw new RuntimeException("Satélite sem energia suficiente.");
+            throw new RuntimeException("Satélite sem energia suficiente (mínimo 20%).");
         }
 
-        // Monta descrição do achado (igual ao original)
         int distancia = new java.util.Random().nextInt(10000) + 50;
         String descricao = switch (resultado) {
-            case "ESTRANHO"   -> "???? Sinal estranho detectado — origem desconhecida";
-            case "ASTEROIDE"  -> "Asteroide detectado a " + distancia + " km — Perigo: ALTO";
-            case "PEDRAS"     -> "Pequenas pedras espaciais a " + distancia + " km — Perigo: Baixo";
-            default           -> "Poeira cósmica a " + distancia + " km — Perigo: Nenhum";
+            case "ESTRANHO"  -> "???? Sinal estranho detectado — origem desconhecida";
+            case "ASTEROIDE" -> "Asteroide detectado a " + distancia + " km — Perigo: ALTO";
+            case "PEDRAS"    -> "Pequenas pedras espaciais a " + distancia + " km — Perigo: Baixo";
+            default          -> "Poeira cósmica a " + distancia + " km — Perigo: Nenhum";
         };
 
         missao.addDado(descricao);
-        sateliteService.buscarPorId(satelite.getId()); // força atualização
         missaoRepo.save(missao);
 
         return Map.of(
-            "tipo", resultado,
-            "descricao", descricao,
-            "energiaRestante", satelite.getEnergia()
+                "tipo",            resultado,
+                "descricao",       descricao,
+                "energiaRestante", satelite.getEnergia()
         );
     }
 
-    // Enviar mensagem pela missão
     public Missao enviarMensagem(Long id, String mensagem) {
         Missao missao = buscarPorId(id);
         if (missao.getStatus() != StatusMissao.EM_ANDAMENTO) {
@@ -114,15 +111,9 @@ public class MissaoService {
         return missaoRepo.save(missao);
     }
 
-    // Ativar painéis solares do satélite da missão
     public Missao ativarPaineis(Long id) {
         Missao missao = buscarPorId(id);
         missao.getSatelite().ativarPaineis();
         return missaoRepo.save(missao);
-    }
-
-    // Lógica original do conferirPeso da Central
-    private boolean conferirPeso(Foguete foguete, Satelite satelite) {
-        return foguete.getCarga() <= satelite.getMassa() * 0.04;
     }
 }

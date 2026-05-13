@@ -1,5 +1,6 @@
 package org.nasa.rocketto.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import org.nasa.rocketto.enums.Orbita;
 import org.nasa.rocketto.enums.StatusFoguete;
@@ -19,7 +20,7 @@ public class Foguete {
     private float combustivel;
 
     @Column(nullable = false)
-    private float carga; // capacidade de carga em kg
+    private float carga;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -29,49 +30,44 @@ public class Foguete {
     @Column(nullable = false)
     private StatusFoguete status = StatusFoguete.EM_SOLO;
 
-    // Satélite atualmente carregado (null = sem carga)
+    // Evita loop infinito na serialização JSON
+    @JsonIgnoreProperties({"foguete", "missoes"})
     @OneToOne
     @JoinColumn(name = "satelite_id")
     private Satelite sateliteCarregado;
 
-    // Distância máxima calculada pela fórmula original: (combustivel - 30) * 400
     @Column
     private float distanciaMaxima;
 
     public Foguete() {}
 
     public Foguete(String nome, float combustivel, float carga, Orbita orbita) {
-        this.nome = nome;
-        this.combustivel = combustivel;
-        this.carga = carga;
-        this.orbita = orbita;
-        this.status = StatusFoguete.EM_SOLO;
-        this.distanciaMaxima = calcularDistancia(combustivel);
+        this.nome             = nome;
+        this.combustivel      = combustivel;
+        this.carga            = carga;
+        this.orbita           = orbita;
+        this.status           = StatusFoguete.EM_SOLO;
+        this.distanciaMaxima  = calcularDistancia(combustivel);
     }
 
-    // Fórmula original mantida
     private float calcularDistancia(float combustivel) {
         return (combustivel - 30) * 400;
     }
 
-    // Lançar o foguete — lógica original do Foguete.java
     public boolean lancar() {
         if (this.combustivel > 50) {
             this.status = StatusFoguete.EM_ORBITA;
             return true;
-        } else {
-            this.status = StatusFoguete.FALHA;
-            return false;
         }
+        this.status = StatusFoguete.FALHA;
+        return false;
     }
 
-    // Abastecer
     public void abastecer(float quantidade) {
         this.combustivel += quantidade;
         this.distanciaMaxima = calcularDistancia(this.combustivel);
     }
 
-    // Getters e Setters
     public Long getId() { return id; }
 
     public String getNome() { return nome; }
@@ -93,7 +89,7 @@ public class Foguete {
     public void setStatus(StatusFoguete status) { this.status = status; }
 
     public Satelite getSateliteCarregado() { return sateliteCarregado; }
-    public void setSateliteCarregado(Satelite sateliteCarregado) { this.sateliteCarregado = sateliteCarregado; }
+    public void setSateliteCarregado(Satelite s) { this.sateliteCarregado = s; }
 
     public float getDistanciaMaxima() { return distanciaMaxima; }
 }
