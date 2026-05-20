@@ -37,8 +37,8 @@
   --font-body:    'DM Sans', sans-serif;
 
   /* Geometria */
-  --radius:    4px;
-  --radius-lg: 8px;
+  --radius:    1px;
+  --radius-lg: 3px;
   --transition: 160ms ease;
 }
 
