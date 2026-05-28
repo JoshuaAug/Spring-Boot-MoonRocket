@@ -7,7 +7,6 @@ public class FogueteRequest {
     private String nome;
     private float combustivel;
     private float carga;
-    private Orbita orbita;
 
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
@@ -15,6 +14,4 @@ public class FogueteRequest {
     public void setCombustivel(float combustivel) { this.combustivel = combustivel; }
     public float getCarga() { return carga; }
     public void setCarga(float carga) { this.carga = carga; }
-    public Orbita getOrbita() { return orbita; }
-    public void setOrbita(Orbita orbita) { this.orbita = orbita; }
 }

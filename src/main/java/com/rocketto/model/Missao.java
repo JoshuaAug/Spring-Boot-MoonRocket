@@ -1,6 +1,7 @@
 package com.rocketto.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.rocketto.enums.Orbita;
 import com.rocketto.enums.StatusFoguete;
 import com.rocketto.enums.StatusSatelite;
 import jakarta.persistence.*;
@@ -38,6 +39,10 @@ public class Missao {
     @JoinColumn(name = "satelite_id")
     private Satelite satelite;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Orbita orbita;
+
     @ElementCollection
     @CollectionTable(name = "missao_mensagens", joinColumns = @JoinColumn(name = "missao_id"))
     @Column(name = "mensagem")
@@ -50,11 +55,12 @@ public class Missao {
 
     public Missao() {}
 
-    public Missao(String nome, String objetivo, Foguete foguete, Satelite satelite) {
+    public Missao(String nome, String objetivo, Foguete foguete, Satelite satelite, Orbita orbita) {
         this.nome     = nome;
         this.objetivo = objetivo;
         this.foguete  = foguete;
         this.satelite = satelite;
+        this.orbita   = orbita;
         this.status   = StatusMissao.PREPARANDO;
     }
 
@@ -95,6 +101,9 @@ public class Missao {
 
     public Satelite getSatelite() { return satelite; }
     public void setSatelite(Satelite satelite) { this.satelite = satelite; }
+
+    public Orbita getOrbita() { return orbita; }
+    public void setOrbita(Orbita orbita) { this.orbita = orbita; }
 
     public List<String> getMensagens() { return mensagens; }
     public void addMensagem(String m) { this.mensagens.add(m); }

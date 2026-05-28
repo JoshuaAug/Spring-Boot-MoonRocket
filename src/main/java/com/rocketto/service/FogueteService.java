@@ -29,7 +29,7 @@ public class FogueteService {
         if (repo.existsByNome(req.getNome())) {
             throw new RuntimeException("Já existe um foguete com o nome: " + req.getNome());
         }
-        Foguete f = new Foguete(req.getNome(), req.getCombustivel(), req.getCarga(), req.getOrbita());
+        Foguete f = new Foguete(req.getNome(), req.getCombustivel(), req.getCarga());
         return repo.save(f);
     }
 
@@ -38,7 +38,6 @@ public class FogueteService {
         f.setNome(req.getNome());
         f.setCombustivel(req.getCombustivel());
         f.setCarga(req.getCarga());
-        f.setOrbita(req.getOrbita());
         return repo.save(f);
     }
 

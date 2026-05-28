@@ -51,3 +51,12 @@ const MissaoAPI = {
   mensagem:   (id, texto)  => req('POST', `/missoes/${id}/mensagem`, { mensagem: texto }),
   paineis:    (id)         => req('POST', `/missoes/${id}/paineis`),
 };
+// ---------- NASA ----------
+const NasaAPI = {
+  asteroides: (dataInicio, dataFim) => {
+    const params = dataFim
+        ? `?dataInicio=${dataInicio}&dataFim=${dataFim}`
+        : `?dataInicio=${dataInicio}`;
+    return req('GET', `/nasa/asteroides${params}`);
+  },
+};

@@ -47,7 +47,7 @@ public class MissaoService {
             );
         }
 
-        Missao missao = new Missao(req.getNome(), req.getObjetivo(), foguete, satelite);
+        Missao missao = new Missao(req.getNome(), req.getObjetivo(), foguete, satelite, req.getOrbita());
         return missaoRepo.save(missao);
     }
 

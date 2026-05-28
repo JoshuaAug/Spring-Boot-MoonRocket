@@ -24,10 +24,6 @@ public class Foguete {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Orbita orbita = Orbita.SOLO;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private StatusFoguete status = StatusFoguete.EM_SOLO;
 
     // Evita loop infinito na serialização JSON
@@ -41,17 +37,18 @@ public class Foguete {
 
     public Foguete() {}
 
-    public Foguete(String nome, float combustivel, float carga, Orbita orbita) {
+    public Foguete(String nome, float combustivel, float carga) {
         this.nome             = nome;
         this.combustivel      = combustivel;
         this.carga            = carga;
-        this.orbita           = orbita;
         this.status           = StatusFoguete.EM_SOLO;
         this.distanciaMaxima  = calcularDistancia(combustivel);
     }
 
     private float calcularDistancia(float combustivel) {
+
         return (combustivel - 30) * 400;
+
     }
 
     public boolean lancar() {
@@ -78,12 +75,8 @@ public class Foguete {
         this.combustivel = combustivel;
         this.distanciaMaxima = calcularDistancia(combustivel);
     }
-
     public float getCarga() { return carga; }
     public void setCarga(float carga) { this.carga = carga; }
-
-    public Orbita getOrbita() { return orbita; }
-    public void setOrbita(Orbita orbita) { this.orbita = orbita; }
 
     public StatusFoguete getStatus() { return status; }
     public void setStatus(StatusFoguete status) { this.status = status; }
