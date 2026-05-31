@@ -2,6 +2,7 @@ package com.rocketto.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rocketto.enums.Orbita;
+import com.rocketto.enums.StatusAgente;
 import com.rocketto.enums.StatusFoguete;
 import com.rocketto.enums.StatusSatelite;
 import jakarta.persistence.*;
@@ -28,7 +29,6 @@ public class Missao {
     @Column(nullable = false)
     private StatusMissao status = StatusMissao.PREPARANDO;
 
-    // JsonIgnoreProperties evita loop infinito: Missao→Foguete→SateliteCarregado→...
     @JsonIgnoreProperties({"sateliteCarregado", "missoes"})
     @ManyToOne
     @JoinColumn(name = "foguete_id")
@@ -42,6 +42,16 @@ public class Missao {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Orbita orbita;
+
+    // Relação com agentes — tabela intermediária missao_agentes
+    @JsonIgnoreProperties({"missoes"})
+    @ManyToMany
+    @JoinTable(
+            name = "missao_agentes",
+            joinColumns = @JoinColumn(name = "missao_id"),
+            inverseJoinColumns = @JoinColumn(name = "agente_id")
+    )
+    private List<Agente> agentes = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "missao_mensagens", joinColumns = @JoinColumn(name = "missao_id"))
@@ -72,6 +82,8 @@ public class Missao {
         }
         this.satelite.setStatus(StatusSatelite.EM_ORBITA);
         this.foguete.setStatus(StatusFoguete.EM_MISSAO);
+        // Bloqueia todos os agentes da missão
+        this.agentes.forEach(a -> a.setStatus(StatusAgente.EM_MISSAO));
         this.status = StatusMissao.EM_ANDAMENTO;
         return true;
     }
@@ -83,6 +95,8 @@ public class Missao {
 
         this.status = objetivoCumprido ? StatusMissao.CONCLUIDA : StatusMissao.FALHOU;
         this.foguete.setStatus(StatusFoguete.EM_SOLO);
+        // Libera todos os agentes de volta para a estação
+        this.agentes.forEach(a -> a.setStatus(StatusAgente.NA_ESTACAO));
     }
 
     public Long getId() { return id; }
@@ -104,6 +118,9 @@ public class Missao {
 
     public Orbita getOrbita() { return orbita; }
     public void setOrbita(Orbita orbita) { this.orbita = orbita; }
+
+    public List<Agente> getAgentes() { return agentes; }
+    public void setAgentes(List<Agente> agentes) { this.agentes = agentes; }
 
     public List<String> getMensagens() { return mensagens; }
     public void addMensagem(String m) { this.mensagens.add(m); }

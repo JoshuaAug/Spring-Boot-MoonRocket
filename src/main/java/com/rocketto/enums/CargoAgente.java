@@ -1,0 +1,12 @@
+package com.rocketto.enums;
+
+public enum CargoAgente {
+    COMANDANTE,
+    PILOTO,
+    ENGENHEIRO,
+    ESPECIALISTA_CIENTIFICO,
+    ESPECIALISTA_SATELITES,
+    ESPECIALISTA_ORBITAL,
+    OFICIAL_DE_COMUNICACAO,
+    MEDICO
+}

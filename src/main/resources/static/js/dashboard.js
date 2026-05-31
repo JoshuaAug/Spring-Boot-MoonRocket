@@ -2,19 +2,23 @@
 let _foguetes = [];
 let _satelites = [];
 let _missoes = [];
+let _agentes = [];
+let _missaoDetalheId = null;
 
 // ---- Carregamento inicial ----
 async function carregarTudo() {
     try {
-        [_foguetes, _satelites, _missoes] = await Promise.all([
+        [_foguetes, _satelites, _missoes, _agentes] = await Promise.all([
             FogueteAPI.listar(),
             SateliteAPI.listar(),
             MissaoAPI.listar(),
+            AgenteAPI.listar(),
         ]);
         renderSummary();
         renderFoguetes();
         renderSatelites();
         renderMissoes();
+        renderAgentes();
     } catch (e) {
         console.error('Erro ao conectar com o backend:', e.message);
     }
@@ -152,17 +156,22 @@ function renderMissoes() {
 }
 
 window.criarMissao = async function () {
-    const nome = document.getElementById('mis-nome').value.trim();
-    const objetivo = document.getElementById('mis-objetivo').value;
-    const orbita = document.getElementById('mis-orbita').value;
-    const fogueteId = parseInt(document.getElementById('mis-foguete').value);
+    const nome       = document.getElementById('mis-nome').value.trim();
+    const objetivo   = document.getElementById('mis-objetivo').value;
+    const orbita     = document.getElementById('mis-orbita').value;
+    const fogueteId  = parseInt(document.getElementById('mis-foguete').value);
     const sateliteId = parseInt(document.getElementById('mis-satelite').value);
+    const agenteIds  = Array.from(document.getElementById('mis-agentes').selectedOptions).map(o => parseInt(o.value));
     if (!nome || isNaN(fogueteId) || isNaN(sateliteId)) {
         mostrarErroModal('mis-erro', 'Preencha todos os campos.');
         return;
     }
+    if (agenteIds.length < 4) {
+        mostrarErroModal('mis-erro', 'Selecione ao menos 4 agentes.');
+        return;
+    }
     try {
-        await MissaoAPI.criar({nome, objetivo, orbita, fogueteId, sateliteId});
+        await MissaoAPI.criar({nome, objetivo, orbita, fogueteId, sateliteId, agenteIds});
         window.fecharModal('modal-missao');
         limparCampos(['mis-nome']);
         await carregarTudo();
@@ -176,12 +185,16 @@ window.abrirDetalhe = async function (id) {
     const m = _missoes.find(x => x.id === id);
     if (!m) return;
 
+    _missaoDetalheId = id;
+    window._missaoDetalheId = id;
+
     document.getElementById('detalhe-nome').textContent = m.nome;
     document.getElementById('detalhe-info').innerHTML =
         `<b>Objetivo:</b> ${m.objetivo} &nbsp;|&nbsp;
    <b>Órbita:</b> ${m.orbita ?? '—'} &nbsp;|&nbsp;
    <b>Foguete:</b> ${m.foguete?.nome ?? '—'} &nbsp;|&nbsp;
    <b>Satélite:</b> ${m.satelite?.nome ?? '—'} &nbsp;|&nbsp;
+   <b>Agentes:</b> ${m.agentes?.map(a => a.nome).join(', ') ?? '—'} &nbsp;|&nbsp;
    <b>Status:</b> ${m.status}`;
 
     const acoes = document.getElementById('detalhe-acoes');
@@ -192,6 +205,13 @@ window.abrirDetalhe = async function (id) {
         acoes.innerHTML += `<button class="btn btn-secondary btn-sm" onclick="window.usarRadar(${m.id})">📡 Radar</button>`;
         acoes.innerHTML += `<button class="btn btn-secondary btn-sm" onclick="window.ativarPaineisMissao(${m.id})">☀️ Painéis</button>`;
         acoes.innerHTML += `<button class="btn btn-danger btn-sm" onclick="window.encerrarMissao(${m.id})">⏹ Encerrar</button>`;
+    }
+
+    const campoMensagem = document.getElementById('detalhe-mensagem');
+    if (m.status === 'EM_ANDAMENTO' && m.objetivo === 'Comunicar') {
+        campoMensagem.classList.remove('hidden');
+    } else {
+        campoMensagem.classList.add('hidden');
     }
 
     const itens = [...(m.dados || []), ...(m.mensagens || [])];
@@ -248,6 +268,115 @@ window.ativarPaineisMissao = async function (id) {
     }
 };
 
+window.enviarMensagem = async function (id) {
+    const texto = document.getElementById('mis-mensagem-texto').value.trim();
+    if (!texto) { alert('Digite uma mensagem antes de enviar.'); return; }
+    try {
+        await MissaoAPI.mensagem(id, texto);
+        document.getElementById('mis-mensagem-texto').value = '';
+        await carregarTudo();
+        window.abrirDetalhe(id);
+    } catch (e) {
+        alert('Erro: ' + e.message);
+    }
+};
+
+// ---- Agentes ----
+function renderAgentes() {
+    const tbody = document.getElementById('tabela-agentes');
+    if (!tbody) return;
+    if (!_agentes.length) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Nenhum agente cadastrado.</td></tr>';
+        return;
+    }
+    tbody.innerHTML = _agentes.map(a => `
+    <tr>
+        <td>${a.nome}</td>
+        <td>${labelCargo(a.cargo)}</td>
+        <td>${a.status === 'NA_ESTACAO'
+        ? '<span class="badge badge-neutral">Na estação</span>'
+        : '<span class="badge badge-info">Em missão</span>'}</td>
+        <td><button class="btn btn-ghost btn-sm" onclick="window.deletarAgente(${a.id})">🗑️</button></td>
+    </tr>`).join('');
+}
+
+window.criarAgente = async function () {
+    const nome  = document.getElementById('age-nome').value.trim();
+    const cargo = document.getElementById('age-cargo').value;
+    if (!nome) { mostrarErroModal('age-erro', 'Informe o nome do agente.'); return; }
+    try {
+        await AgenteAPI.criar({nome, cargo});
+        window.fecharModal('modal-agente');
+        limparCampos(['age-nome']);
+        await carregarTudo();
+    } catch (e) {
+        mostrarErroModal('age-erro', e.message);
+    }
+};
+
+window.deletarAgente = async function (id) {
+    if (!confirm('Deletar este agente?')) return;
+    try {
+        await AgenteAPI.deletar(id);
+        await carregarTudo();
+    } catch (e) {
+        alert('Erro: ' + e.message);
+    }
+};
+
+function labelCargo(cargo) {
+    const labels = {
+        COMANDANTE: 'Comandante',
+        PILOTO: 'Piloto',
+        ENGENHEIRO: 'Engenheiro',
+        ESPECIALISTA_CIENTIFICO: 'Esp. Científico',
+        ESPECIALISTA_SATELITES: 'Esp. Satélites',
+        ESPECIALISTA_ORBITAL: 'Esp. Orbital',
+        OFICIAL_DE_COMUNICACAO: 'Of. Comunicação',
+        MEDICO: 'Médico'
+    };
+    return labels[cargo] || cargo;
+}
+
+// ---- Asteroides NASA ----
+window.buscarAsteroides = async function () {
+    const dataInicio = document.getElementById('neo-data-inicio').value;
+    const dataFim    = document.getElementById('neo-data-fim').value;
+    const erro       = document.getElementById('neo-erro');
+    const tbody      = document.getElementById('tabela-asteroides');
+
+    if (!dataInicio) {
+        erro.textContent = 'Informe ao menos a data de início.';
+        erro.classList.remove('hidden');
+        return;
+    }
+    erro.classList.add('hidden');
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Buscando...</td></tr>';
+
+    try {
+        const asteroides = await NasaAPI.asteroides(dataInicio, dataFim || null);
+        if (!asteroides.length) {
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Nenhum asteroide encontrado nesse período.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = asteroides.map(a => `
+        <tr>
+            <td>${a.nome}</td>
+            <td>${a.diametroMinKm.toFixed(3)} – ${a.diametroMaxKm.toFixed(3)}</td>
+            <td>${a.velocidadeKmH.toFixed(0)}</td>
+            <td>${a.distanciaKm.toFixed(0)}</td>
+            <td>${a.dataAproximacao}</td>
+            <td>${a.potencialmentePerigoso
+            ? '<span class="badge badge-danger">⚠ Perigoso</span>'
+            : '<span class="badge badge-neutral">Seguro</span>'}</td>
+        </tr>`).join('');
+    } catch (e) {
+        erro.textContent = 'Erro ao buscar asteroides: ' + e.message;
+        erro.classList.remove('hidden');
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Falha na busca.</td></tr>';
+    }
+};
+
 // ---- Navegação de seções ----
 window.showSection = function (id, el) {
     document.querySelectorAll('.dash-section').forEach(s => s.classList.add('hidden'));
@@ -255,11 +384,16 @@ window.showSection = function (id, el) {
     document.getElementById('section-' + id)?.classList.remove('hidden');
     if (el) el.classList.add('active');
     if (id === 'missoes') popularSelectsMissao();
+    if (id === 'agentes') renderAgentes();
 };
 
 function popularSelectsMissao() {
-    document.getElementById('mis-foguete').innerHTML = _foguetes.map(f => `<option value="${f.id}">${f.nome}</option>`).join('');
+    document.getElementById('mis-foguete').innerHTML  = _foguetes.map(f => `<option value="${f.id}">${f.nome}</option>`).join('');
     document.getElementById('mis-satelite').innerHTML = _satelites.map(s => `<option value="${s.id}">${s.nome}</option>`).join('');
+    const disponiveis = _agentes.filter(a => a.status === 'NA_ESTACAO');
+    document.getElementById('mis-agentes').innerHTML  = disponiveis.map(a =>
+        `<option value="${a.id}">${a.nome} — ${labelCargo(a.cargo)}</option>`
+    ).join('');
 }
 
 // ---- Modais ----
@@ -296,28 +430,16 @@ function limparCampos(ids) {
 
 function badgeStatus(s) {
     const m = {
-        EM_SOLO: 'badge-neutral',
-        EM_ORBITA: 'badge-info',
-        EM_MISSAO: 'badge-info',
-        FALHA: 'badge-danger',
-        SEM_ENERGIA: 'badge-danger',
-        INATIVO: 'badge-neutral',
-        PREPARANDO: 'badge-warning',
-        EM_ANDAMENTO: 'badge-success',
-        CONCLUIDA: 'badge-success',
-        FALHOU: 'badge-danger'
+        EM_SOLO: 'badge-neutral', EM_ORBITA: 'badge-info', EM_MISSAO: 'badge-info',
+        FALHA: 'badge-danger', SEM_ENERGIA: 'badge-danger', INATIVO: 'badge-neutral',
+        PREPARANDO: 'badge-warning', EM_ANDAMENTO: 'badge-success',
+        CONCLUIDA: 'badge-success', FALHOU: 'badge-danger'
     };
     const l = {
-        EM_SOLO: 'Em solo',
-        EM_ORBITA: 'Em órbita',
-        EM_MISSAO: 'Em missão',
-        FALHA: 'Falha',
-        SEM_ENERGIA: 'Sem energia',
-        INATIVO: 'Inativo',
-        PREPARANDO: 'Preparando',
-        EM_ANDAMENTO: 'Em andamento',
-        CONCLUIDA: 'Concluída',
-        FALHOU: 'Falhou'
+        EM_SOLO: 'Em solo', EM_ORBITA: 'Em órbita', EM_MISSAO: 'Em missão',
+        FALHA: 'Falha', SEM_ENERGIA: 'Sem energia', INATIVO: 'Inativo',
+        PREPARANDO: 'Preparando', EM_ANDAMENTO: 'Em andamento',
+        CONCLUIDA: 'Concluída', FALHOU: 'Falhou'
     };
     return `<span class="badge ${m[s] || 'badge-neutral'}">${l[s] || s}</span>`;
 }
@@ -328,43 +450,3 @@ function energiaCor(e) {
 
 // ---- Inicia ----
 carregarTudo();
-// ---- Asteroides NASA ----
-window.buscarAsteroides = async function () {
-    const dataInicio = document.getElementById('neo-data-inicio').value;
-    const dataFim    = document.getElementById('neo-data-fim').value;
-    const erro       = document.getElementById('neo-erro');
-    const tbody      = document.getElementById('tabela-asteroides');
-
-    if (!dataInicio) {
-        erro.textContent = 'Informe ao menos a data de início.';
-        erro.classList.remove('hidden');
-        return;
-    }
-    erro.classList.add('hidden');
-    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Buscando...</td></tr>';
-
-    try {
-        const asteroides = await NasaAPI.asteroides(dataInicio, dataFim || null);
-
-        if (!asteroides.length) {
-            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Nenhum asteroide encontrado nesse período.</td></tr>';
-            return;
-        }
-
-        tbody.innerHTML = asteroides.map(a => `
-        <tr>
-            <td>${a.nome}</td>
-            <td>${a.diametroMinKm.toFixed(3)} – ${a.diametroMaxKm.toFixed(3)}</td>
-            <td>${a.velocidadeKmH.toFixed(0)}</td>
-            <td>${a.distanciaKm.toFixed(0)}</td>
-            <td>${a.dataAproximacao}</td>
-            <td>${a.potencialmentePerigoso
-            ? '<span class="badge badge-danger">⚠ Perigoso</span>'
-            : '<span class="badge badge-neutral">Seguro</span>'}</td>
-        </tr>`).join('');
-    } catch (e) {
-        erro.textContent = 'Erro ao buscar asteroides: ' + e.message;
-        erro.classList.remove('hidden');
-        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Falha na busca.</td></tr>';
-    }
-};

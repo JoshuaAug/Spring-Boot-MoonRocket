@@ -1,7 +1,10 @@
 package com.rocketto.service;
 
 import com.rocketto.dto.MissaoRequest;
+import com.rocketto.enums.CargoAgente;
+import com.rocketto.enums.StatusAgente;
 import com.rocketto.enums.StatusMissao;
+import com.rocketto.model.Agente;
 import com.rocketto.model.Foguete;
 import com.rocketto.model.Missao;
 import com.rocketto.model.Satelite;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class MissaoService {
@@ -17,13 +21,16 @@ public class MissaoService {
     private final MissaoRepository missaoRepo;
     private final FogueteService fogueteService;
     private final SateliteService sateliteService;
+    private final AgenteService agenteService;
 
     public MissaoService(MissaoRepository missaoRepo,
                          FogueteService fogueteService,
-                         SateliteService sateliteService) {
+                         SateliteService sateliteService,
+                         AgenteService agenteService) {
         this.missaoRepo      = missaoRepo;
         this.fogueteService  = fogueteService;
         this.sateliteService = sateliteService;
+        this.agenteService   = agenteService;
     }
 
     public List<Missao> listar() {
@@ -43,12 +50,52 @@ public class MissaoService {
         if (satelite.getMassa() > foguete.getCarga()) {
             throw new RuntimeException(
                     "Satélite muito pesado! Massa: " + satelite.getMassa() +
-                            " kg — Capacidade do foguete: " + foguete.getCarga() + " kg"
-            );
+                            " kg — Capacidade do foguete: " + foguete.getCarga() + " kg");
         }
 
+        // Busca e valida os agentes
+        List<Agente> agentes = req.getAgenteIds().stream()
+                .map(agenteService::buscarPorId)
+                .collect(Collectors.toList());
+
+        validarAgentes(agentes);
+
         Missao missao = new Missao(req.getNome(), req.getObjetivo(), foguete, satelite, req.getOrbita());
+        missao.setAgentes(agentes);
         return missaoRepo.save(missao);
+    }
+
+    private void validarAgentes(List<Agente> agentes) {
+        if (agentes.size() < 4) {
+            throw new RuntimeException("A missão requer no mínimo 4 agentes.");
+        }
+
+        // Conta por cargo
+        Map<CargoAgente, Long> contagem = agentes.stream()
+                .collect(Collectors.groupingBy(Agente::getCargo, Collectors.counting()));
+
+        long comandantes = contagem.getOrDefault(CargoAgente.COMANDANTE, 0L);
+        long pilotos     = contagem.getOrDefault(CargoAgente.PILOTO, 0L);
+        long outros      = agentes.stream()
+                .filter(a -> a.getCargo() != CargoAgente.COMANDANTE && a.getCargo() != CargoAgente.PILOTO)
+                .count();
+
+        if (comandantes != 1) {
+            throw new RuntimeException("A missão deve ter exatamente 1 Comandante.");
+        }
+        if (pilotos < 1) {
+            throw new RuntimeException("A missão deve ter ao menos 1 Piloto.");
+        }
+        if (outros < 2) {
+            throw new RuntimeException("A missão deve ter ao menos 2 agentes de outras funções.");
+        }
+
+        // Verifica se algum agente já está em missão
+        agentes.forEach(a -> {
+            if (a.getStatus() == StatusAgente.EM_MISSAO) {
+                throw new RuntimeException("O agente '" + a.getNome() + "' já está em outra missão.");
+            }
+        });
     }
 
     public Missao iniciar(Long id) {

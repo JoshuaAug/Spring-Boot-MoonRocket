@@ -30,8 +30,8 @@
       <a href="#" class="sidebar-link" onclick="window.showSection('missoes',this);return false;">
         <span class="sidebar-link-icon">🎯</span> Missões
       </a>
-      <a href="#" class="sidebar-link" onclick="window.showSection('asteroides',this);return false;">
-        <span class="sidebar-link-icon">☄️</span> Asteroides
+      <a href="#" class="sidebar-link" onclick="window.showSection('agentes',this);return false;">
+        <span class="sidebar-link-icon">👨‍🚀</span> Agentes
       </a>
     </aside>
 
@@ -113,32 +113,19 @@
         </div>
       </section>
 
-      <!-- ASTEROIDES NASA -->
-      <section id="section-asteroides" class="dash-section hidden">
+      <!-- AGENTES -->
+      <section id="section-agentes" class="dash-section hidden">
         <div class="section-header">
-          <span class="section-title">Asteroides — NASA NeoWs</span>
-        </div>
-        <div class="card" style="padding:1.25rem;margin-bottom:1rem;">
-          <div style="display:flex;gap:0.75rem;align-items:flex-end;flex-wrap:wrap;">
-            <div class="field" style="margin:0">
-              <label class="input-label">Data início</label>
-              <input class="input" type="date" id="neo-data-inicio" />
-            </div>
-            <div class="field" style="margin:0">
-              <label class="input-label">Data fim (máx. 7 dias)</label>
-              <input class="input" type="date" id="neo-data-fim" />
-            </div>
-            <button class="btn btn-primary btn-sm" onclick="window.buscarAsteroides()">🔭 Buscar</button>
-          </div>
-          <p class="modal-error hidden" id="neo-erro" style="margin-top:0.75rem"></p>
+          <span class="section-title">Agentes</span>
+          <button class="btn btn-primary btn-sm" onclick="window.abrirModal('modal-agente')">+ Novo Agente</button>
         </div>
         <div class="card">
           <table class="table">
             <thead>
-            <tr><th>Nome</th><th>Diâmetro (km)</th><th>Velocidade (km/h)</th><th>Distância (km)</th><th>Data aprox.</th><th>Perigo</th></tr>
+            <tr><th>Nome</th><th>Cargo</th><th>Status</th><th></th></tr>
             </thead>
-            <tbody id="tabela-asteroides">
-            <tr><td colspan="6" class="empty-state">Selecione um período e clique em Buscar.</td></tr>
+            <tbody id="tabela-agentes">
+            <tr><td colspan="4" class="empty-state">Carregando...</td></tr>
             </tbody>
           </table>
         </div>
@@ -233,10 +220,46 @@
       <label class="input-label">Satélite</label>
       <select class="select" id="mis-satelite"></select>
     </div>
+    <div class="field">
+      <label class="input-label">Agentes <span style="color:var(--text-3);font-size:0.78rem">(selecione ao menos 4: 1 Comandante, 1 Piloto, 2 outros)</span></label>
+      <select class="select" id="mis-agentes" multiple style="height:140px"></select>
+    </div>
     <p class="modal-error hidden" id="mis-erro"></p>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="window.fecharModal('modal-missao')">Cancelar</button>
       <button class="btn btn-primary" onclick="window.criarMissao()">Criar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Novo Agente -->
+<div class="modal-overlay hidden" id="modal-agente">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Novo Agente</span>
+      <button class="modal-close" onclick="window.fecharModal('modal-agente')">✕</button>
+    </div>
+    <div class="field">
+      <label class="input-label">Nome</label>
+      <input class="input" id="age-nome" placeholder="ex: João Silva" />
+    </div>
+    <div class="field">
+      <label class="input-label">Cargo</label>
+      <select class="select" id="age-cargo">
+        <option value="COMANDANTE">Comandante</option>
+        <option value="PILOTO">Piloto</option>
+        <option value="ENGENHEIRO">Engenheiro</option>
+        <option value="ESPECIALISTA_CIENTIFICO">Especialista Científico</option>
+        <option value="ESPECIALISTA_SATELITES">Especialista em Satélites</option>
+        <option value="ESPECIALISTA_ORBITAL">Especialista Orbital</option>
+        <option value="OFICIAL_DE_COMUNICACAO">Oficial de Comunicação</option>
+        <option value="MEDICO">Médico</option>
+      </select>
+    </div>
+    <p class="modal-error hidden" id="age-erro"></p>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="window.fecharModal('modal-agente')">Cancelar</button>
+      <button class="btn btn-primary" onclick="window.criarAgente()">Criar</button>
     </div>
   </div>
 </div>
@@ -264,4 +287,4 @@
   </div>
 </div>
 try {
-<script type="module" src="/js/dashboard.js"></script>
+<script src="js/dashboard.js"></script>
